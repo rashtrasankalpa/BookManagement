@@ -235,12 +235,16 @@ function selectBook(index){
 
     showLoader();
     fetch(`${API}?action=getReaders&title=${encodeURIComponent(book.title)}&language=${encodeURIComponent(book.language)}`)
-    .then(res=>res.json())
+    .then(res => res.json())
     .then(data => {
         book.readers = data.map(r => ({ name:r[2], date:r[3] }));
         displayReaders(book);
     })
-    .finally(()=>hideLoader());
+    .catch(err => {
+        console.error("Failed to fetch readers:", err);
+        alert("Unable to fetch readers. Please check your internet connection.");
+    })
+    .finally(() => hideLoader());
 }
 
 /* ===== DISPLAY READERS ===== */

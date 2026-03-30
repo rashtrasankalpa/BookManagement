@@ -278,8 +278,7 @@ function addReader(){
 
     showLoader();
     fetch(`${API}?action=addReader&title=${encodeURIComponent(book.title)}&language=${encodeURIComponent(book.language)}&reader=${encodeURIComponent(reader)}`).then(()=> selectBook(selectedBookIndex))
-      .finally(()=> document.getElementById("readerName").value="");
-	hideLoader();
+      .finally(()=>{ document.getElementById("readerName").value="";hideLoader();});
 }
 
 /* ===== DELETE BOOK ===== */

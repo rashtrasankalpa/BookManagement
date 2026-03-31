@@ -1,302 +1,306 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Library Tracker</title>
-<style>
-/* ... Keep your existing CSS ... */
-body {
-	margin: 0;
-	font-family: Arial, sans-serif;
-	background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-		url('https://images.unsplash.com/photo-1524995997946-a1c2e315a42f')
-		no-repeat center center/cover;
-	color: #fff;
-	min-height: 100vh;
-}
-
-.container {
-	max-width: 900px;
-	margin: 40px auto;
-	background: rgba(0, 0, 0, 0.55);
-	padding: 20px;
-	border-radius: 12px;
-	backdrop-filter: blur(12px);
-}
-
-h2, h3 {
-	text-align: center;
-	text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
-}
-
-input {
-	width: 95%;
-	padding: 10px;
-	margin: 8px 0;
-	border-radius: 6px;
-	border: none;
-	display: block;
-	background: rgba(255, 255, 255, 0.9);
-	color: #000;
-}
-
-button {
-	width: 100%;
-	padding: 10px;
-	border: none;
-	border-radius: 6px;
-	background: #007bff;
-	color: #fff;
-	cursor: pointer;
-	margin-top: 5px;
-	transition: 0.3s;
-}
-
-button:hover {
-	background: #0056b3;
-}
-
-.grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-	gap: 15px;
-	margin-top: 20px;
-}
-
-.card {
-	background: rgba(255, 255, 255, 0.15);
-	padding: 15px;
-	border-radius: 10px;
-	cursor: pointer;
-	border: 1px solid rgba(255, 255, 255, 0.2);
-	transition: 0.3s;
-}
-
-.card:hover {
-	transform: scale(1.05);
-}
-
-.card small {
-	opacity: 0.8;
-}
-
-.delete {
-	color: #ff6b6b;
-	cursor: pointer;
-}
-
-.details {
-	margin-top: 20px;
-	padding: 15px;
-	background: rgba(255, 255, 255, 0.15);
-	border-radius: 10px;
-	display: none;
-}
-
-.overlay {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background: rgba(0, 0, 0, 0.6);
-	display: none;
-	justify-content: center;
-	align-items: center;
-	z-index: 999;
-}
-
-.overlay.active {
-	display: flex;
-}
-
-.loader {
-	border: 6px solid #fff;
-	border-top: 6px solid #00d4ff;
-	border-radius: 50%;
-	width: 50px;
-	height: 50px;
-	animation: spin 1s linear infinite;
-}
-
-@
-keyframes spin { 100%{
-	transform: rotate(360deg);
-}
-}
-</style>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+              url('https://plus.unsplash.com/premium_photo-1711987494491-e2d3add52ff2?q=80&w=480&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')
+              no-repeat center center/cover;
+  color: #fff;
+  min-height: 100vh;
+}
 
-	<div class="container" id="app">
-		<h2>📚 Library Tracker</h2>
-		<button id="showLoginBtn" onclick="showLogin()">Admin Login</button>
+        /* === Loader Overlay === */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* dark semi-transparent layer */
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
 
-		<!-- ADD BOOK -->
-		<div id="bookForm" style="display: none;">
-			<input type="text" id="bookTitle" placeholder="Book Title"> <input
-				type="text" id="bookLanguage" placeholder="Language">
-			<button onclick="addBook()">Add Book</button>
-		</div>
+        .overlay.active {
+            display: flex;
+        }
 
-		<!-- BOOK GRID -->
-		<div id="bookGrid" class="grid"></div>
+        /* Spinner */
+        .loader {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #007bff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
 
-		<!-- DETAILS -->
-		<div class="details" id="detailsDiv">
-			<h3 id="detailsTitle">Book history</h3>
-			<input type="text" id="readerName" placeholder="Reader Name"
-				style="display: none;">
-			<button onclick="addReader()" id="addReaderBtn"
-				style="display: none;">Add Reader</button>
-			<ul id="readerList"></ul>
-		</div>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+</style>
+<body class="min-h-screen bg-slate-100 p-4 md:p-8">
+<div id="overlay" class="overlay">
+  <div class="loader"></div>
+</div>
 
-		<div id="loginDiv" class="login-container" style="display: none;">
-			<h2>Admin Login</h2>
-			<input type="text" id="username" placeholder="Username"> <input
-				type="password" id="password" placeholder="Password">
-			<button onclick="login()">Login</button>
-		</div>
+<div class="mx-auto max-w-7xl space-y-6">
 
-	</div>
+  <!-- HEADER -->
+  <div class="rounded-3xl bg-white p-6 shadow-lg">
+    <h1 id="image" class="text-3xl font-bold text-slate-800">Library Management</h1>
+  </div>
 
-	<!-- LOADER -->
-	<div id="overlay" class="overlay">
-		<div class="loader"></div>
-	</div>
+  <!-- MAIN -->
+  <div class="grid gap-6 lg:grid-cols-[1.1fr_1fr]">
 
-	<script>
-const API = "https://script.google.com/macros/s/AKfycbz7qnixjCLOolhzQ2VCOzR00gWFCoi87kmMSJc3Ughf7ZrG2YqAkav8uaVi3yel6LMg/exec"; // Replace with your deployed web app URL
-let books = [];
-let selectedBookIndex = null;
-const overlay = document.getElementById("overlay");
+    <!-- LATEST BOOKS -->
+    <div class="rounded-3xl bg-white p-6 shadow-lg">
+      <h2 class="text-xl font-semibold text-slate-800 mb-4">
+        Latest Books (<span id="latestCount">0</span>)
+      </h2>
+	  <div class="mb-4">
+  <select id="languageFilter" style="color: #800000;"
+    class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm">
+    <option value="ALL">All Languages</option>
+  </select>
+</div>
 
-function showLoader(){ overlay.classList.add("active"); }
-function hideLoader(){ overlay.classList.remove("active"); }
+      <div id="latestContainer" class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3"></div>
+    </div>
 
-/* ===== FETCH BOOKS ===== */
-function renderBooks(){
-    showLoader();
-    fetch(`${API}?action=getBooks`)
+    <!-- HISTORY -->
+    <div class="rounded-3xl bg-white p-6 shadow-lg">
+      <h2 class="text-xl font-semibold text-slate-800 mb-4">Book History</h2>
+      <div id="historyContainer"
+        class="text-slate-500 text-center h-[320px] flex flex-col items-center justify-center border border-dashed rounded-2xl p-4">
+        Select a book
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ✅ USE YOUR WORKING APPS SCRIPT URL */
+const API_URL = "https://script.google.com/macros/s/AKfycbyP49X3NXTqbgascGLFzRpu_8u2tD-kVW3oJSCw1J6iSmFM0JSTAUf-OFYcfeJy40kkNg/exec";
+let selectedLanguage = "ALL";
+let allData = [];
+
+// ✅ Fetch data (CORS-safe, works in file://)
+
+/*async function fetchSheetData() {
+  showLoader();
+  fetch(`${API_URL}?action=get`)
     .then(res => res.json())
     .then(data => {
-        books = data.map(b => ({ title:b[0], language:b[1], readers:[] }));
-        populateBooks();
-    })
-    .finally(() => hideLoader());
-}
 
-function showLogin(){ 
-	document.getElementById("loginDiv").style.display = "block"; 
-}
+      allData = data.map(row => ({
+        Title: row.Title?.trim(),
+        Language: row.Language?.trim(),
+        "Pending with": row["Pending with"]?.trim(),
+        "Purchase date": formatDate(row["Purchase date"]),
+        Latestyn: row.Latestyn?.toString().trim().toUpperCase()
+      }));
 
-/* ===== LOGIN ===== */
-function login(){
-    const user = document.getElementById("username").value.trim();
-    const pass = document.getElementById("password").value.trim();
-    // simple hardcoded admin check
-    if(user==="shri" && pass==="shri"){
-        document.getElementById("loginDiv").style.display = "none";
-        document.getElementById("app").style.display = "block";
-		isAdmin = true;
-        renderBooks();
-		document.getElementById("bookForm").style.display = "block";
-		document.getElementById("readerName").style.display = "inline-block"; 
-		document.getElementById("addReaderBtn").style.display = "inline-block";
-		alert("Welcome Admin!");
-    } else {
-        alert("Invalid credentials");
-    }
-}
-
-/* ===== POPULATE BOOK GRID ===== */
-function populateBooks(){
-    const grid = document.getElementById("bookGrid");
-    grid.innerHTML = "";
-    books.forEach((book,index)=>{
-        const div = document.createElement("div");
-        div.className = "card";
-        div.innerHTML = `<strong>${book.title}</strong><br><small>${book.language}</small><br><br>
-                         <span class="delete" onclick="event.stopPropagation(); deleteBook(${index})">🗑 Delete</span>`;
-        div.onclick = ()=>selectBook(index);
-        grid.appendChild(div);
-    });
-}
-
-/* ===== SELECT BOOK ===== */
-function selectBook(index){
-    selectedBookIndex = index;
-    const book = books[index];
-    const detailsDiv = document.getElementById("detailsDiv");
-    detailsDiv.style.display = "block";
-    document.getElementById("detailsTitle").textContent = `${book.title} (${book.language})`;
-
-    showLoader();
-    fetch(`${API}?action=getReaders&title=${encodeURIComponent(book.title)}&language=${encodeURIComponent(book.language)}`)
-    .then(res => res.json())
-    .then(data => {
-        book.readers = data.map(r => ({ name:r[2], date:r[3] }));
-        displayReaders(book);
+      populateLanguageFilter();
+	  renderLatestBooks();
     })
     .catch(err => {
-        console.error("Failed to fetch readers:", err);
-        alert("Unable to fetch readers. Please check your internet connection.");
-    })
-    .finally(() => hideLoader());
-}
-
-/* ===== DISPLAY READERS ===== */
-function displayReaders(book){
-    const list = document.getElementById("readerList");
-    list.innerHTML = "";
-    book.readers.forEach(r => {
-        const li = document.createElement("li");
-        li.textContent = `${r.name} - ${r.date}`;
-        list.appendChild(li);
+      console.error("Error fetching data:", err);
+      document.getElementById("latestContainer").innerHTML =
+        `<div class="text-red-500 col-span-full text-center">Failed to load data</div>`;
     });
-}
+	hideLoader();
+}*/
 
-/* ===== ADD BOOK ===== */
-function addBook(){
-    const title = document.getElementById("bookTitle").value.trim();
-    const language = document.getElementById("bookLanguage").value.trim();
-    if(!title || !language){ alert("Enter all fields"); return; }
+async function fetchSheetData() {
+    showLoader();  // show loader first
 
-    showLoader();
-    fetch(`${API}?action=addBook&title=${encodeURIComponent(title)}&language=${encodeURIComponent(language)}`).then(()=> renderBooks())
-      .finally(()=>{
-        document.getElementById("bookTitle").value="";
-        document.getElementById("bookLanguage").value="";
+    try {
+        // allow browser to render overlay
+        await new Promise(resolve => setTimeout(resolve, 50));
+
+        const res = await fetch(`${API_URL}?action=get`);
+        const data = await res.json();
+
+        allData = data.map(row => ({
+            Title: row.Title?.trim(),
+            Language: row.Language?.trim(),
+            "Pending with": row["Pending with"]?.trim(),
+            "Purchase date": formatDate(row["Purchase date"]),
+            Latestyn: row.Latestyn?.toString().trim().toUpperCase()
+        }));
+
+        populateLanguageFilter();
+        renderLatestBooks();
+    } catch (err) {
+        console.error("Error fetching data:", err);
+        document.getElementById("latestContainer").innerHTML =
+          `<div class="text-red-500 col-span-full text-center">Failed to load data</div>`;
+    } finally {
         hideLoader();
-    });
+    }
+}
+function formatDate(dateStr) {
+  if (!dateStr) return "";
+
+  const d = new Date(dateStr);
+
+  return d.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
 }
 
-/* ===== ADD READER ===== */
-function addReader(){
-    if(selectedBookIndex===null){ alert("Select a book first"); return; }
-    const book = books[selectedBookIndex];
-    const reader = document.getElementById("readerName").value.trim();
-    if(!reader){ alert("Enter reader name"); return; }
+// Render Latest Books
+/*function renderLatestBooks() {
+  const container = document.getElementById("latestContainer");
+  container.innerHTML = "";
 
-    showLoader();
-    fetch(`${API}?action=addReader&title=${encodeURIComponent(book.title)}&language=${encodeURIComponent(book.language)}&reader=${encodeURIComponent(reader)}`).then(()=> selectBook(selectedBookIndex))
-      .finally(()=>{ document.getElementById("readerName").value="";hideLoader();});
+  const uniqueLatest = [
+    ...new Map(
+      allData
+        .filter(b => b["Latestyn"] === "Y" && (selectedLanguage === "ALL" || b["Language"] === selectedLanguage))
+        .map(b => [b["Title"], b])
+    ).values()
+  ];
+
+  document.getElementById("latestCount").innerText = uniqueLatest.length;
+
+  if (uniqueLatest.length === 0) {
+    container.innerHTML =
+      `<div class="text-slate-500 col-span-full text-center">No latest books found</div>`;
+    return;
+  }
+
+  uniqueLatest.forEach(book => {
+    const card = document.createElement("div");
+
+    card.className =
+      "cursor-pointer rounded-2xl border p-4 hover:bg-blue-50 transition";
+
+    card.innerHTML = `
+      <div class="font-bold text-slate-800">${book["Title"]}</div>
+      <div class="text-xs italic text-slate-500">${book["Language"]}</div>
+    `;
+
+    card.onclick = () => showHistory(book["Title"]);
+
+    container.appendChild(card);
+  });
+}*/
+function renderLatestBooks() {
+  const container = document.getElementById("latestContainer");
+  container.innerHTML = "";
+
+  const uniqueLatest = [
+    ...new Map(
+      allData
+        .filter(b => b["Latestyn"] === "Y")
+        .map(b => [b["Title"], b])
+    ).values()
+  ];
+
+  // Apply language filter
+  const filteredLatest = selectedLanguage === "ALL"
+    ? uniqueLatest
+    : uniqueLatest.filter(b => b.Language === selectedLanguage);
+
+  document.getElementById("latestCount").innerText = filteredLatest.length;
+
+  if (filteredLatest.length === 0) {
+    container.innerHTML =
+      `<div class="text-slate-500 col-span-full text-center">No latest books found</div>`;
+    return;
+  }
+
+  filteredLatest.forEach(book => {
+    const card = document.createElement("div");
+
+    // Color based on "Pending with"
+    const bgColor = book["Pending with"]
+      ? "bg-orange-100 hover:bg-orange-200"
+      : "bg-green-100 hover:bg-green-200";
+
+    card.className =
+      `cursor-pointer rounded-2xl border p-4 transition ${bgColor}`;
+
+    card.innerHTML = `
+      <div class="font-bold text-slate-800">${book["Title"]}</div>
+      <div class="text-xs italic text-slate-500">${book["Language"]}</div>
+    `;
+
+    card.onclick = () => showHistory(book["Title"]);
+
+    container.appendChild(card);
+  });
 }
 
-/* ===== DELETE BOOK ===== */
-function deleteBook(index){
-    const book = books[index];
-    if(!confirm("Delete this book?")) return;
+// Show History
+function showHistory(title) {
+  const historyDiv = document.getElementById("historyContainer");
 
-    showLoader();
-    fetch(`${API}?action=deleteBook&title=${encodeURIComponent(book.title)}&language=${encodeURIComponent(book.language)}`).then(()=> renderBooks())
-      .finally(()=> hideLoader());
+  const history = allData.filter(b => b["Title"] === title);
+
+  if (history.length === 0) {
+    historyDiv.innerHTML = "No history found";
+    return;
+  }
+
+  historyDiv.innerHTML = `
+    <div class="w-full text-left space-y-2">
+      <h3 class="font-bold text-lg text-slate-800 mb-2">${title}</h3>
+      ${history.map(h => `
+        <div class="border rounded-xl p-3">
+          <div><b>Pending with:</b> ${h["Pending with"]}</div>
+          <div><b>Purchase date:</b> ${h["Purchase date"]}</div>
+          <div><b>Language:</b> ${h["Language"]}</div>
+        </div>
+      `).join("")}
+    </div>
+  `;
 }
 
-/* ===== INIT ===== */
-renderBooks();
+function populateLanguageFilter() {
+  const dropdown = document.getElementById("languageFilter");
+
+  const languages = [
+    ...new Set(allData.map(b => b.Language).filter(Boolean))
+  ].sort();
+
+  dropdown.innerHTML = `<option value="ALL">All Languages</option>`;
+
+  languages.forEach(lang => {
+    dropdown.innerHTML += `<option value="${lang}">${lang}</option>`;
+  });
+
+  dropdown.onchange = (e) => {
+    selectedLanguage = e.target.value;
+    renderLatestBooks();
+  };
+}
+
+function showLoader() {
+	overlay.classList.add('active');
+}
+
+function hideLoader() {
+	overlay.classList.remove('active');
+}
+
+// Init
+fetchSheetData();
 </script>
 
 </body>

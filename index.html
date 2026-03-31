@@ -1,128 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.tailwindcss.com"></script>
 </head>
 <style>
 body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-              url('https://plus.unsplash.com/premium_photo-1711987494491-e2d3add52ff2?q=80&w=480&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')
-              no-repeat center center/cover;
-  color: #fff;
-  min-height: 100vh;
+	margin: 0;
+	font-family: Arial, sans-serif;
+	background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+		url('https://plus.unsplash.com/premium_photo-1711987494491-e2d3add52ff2?q=80&w=480&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')
+		no-repeat center center/cover;
+	color: #fff;
+	min-height: 100vh;
 }
 
-        /* === Loader Overlay === */
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5); /* dark semi-transparent layer */
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.3s ease;
-        }
+/* === Loader Overlay === */
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.5); /* dark semi-transparent layer */
+	display: none;
+	justify-content: center;
+	align-items: center;
+	z-index: 9999;
+	transition: opacity 0.3s ease;
+}
 
-        .overlay.active {
-            display: flex;
-        }
+.overlay.active {
+	display: flex;
+}
 
-        /* Spinner */
-        .loader {
-            border: 6px solid #f3f3f3;
-            border-top: 6px solid #007bff;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
+/* Spinner */
+.loader {
+	border: 6px solid #f3f3f3;
+	border-top: 6px solid #007bff;
+	border-radius: 50%;
+	width: 50px;
+	height: 50px;
+	animation: spin 1s linear infinite;
+}
 
-        @keyframes spin {
+@keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 </style>
 <body class="min-h-screen bg-slate-100 p-4 md:p-8">
-<div id="overlay" class="overlay">
-  <div class="loader"></div>
-</div>
+	<div id="overlay" class="overlay">
+		<div class="loader"></div>
+	</div>
 
-<div class="mx-auto max-w-7xl space-y-6">
+	<div class="mx-auto max-w-7xl space-y-6">
 
-  <!-- HEADER -->
-  <div class="rounded-3xl bg-white p-6 shadow-lg">
-    <h1 id="image" class="text-3xl font-bold text-slate-800">Library Management</h1>
-  </div>
+		<!-- HEADER -->
+		<div class="rounded-3xl bg-white p-6 shadow-lg">
+			<h1 id="image" class="text-3xl font-bold text-slate-800">Library
+				Management</h1>
+		</div>
 
-  <!-- MAIN -->
-  <div class="grid gap-6 lg:grid-cols-[1.1fr_1fr]">
+		<!-- MAIN -->
+		<div class="grid gap-6 lg:grid-cols-[1.1fr_1fr]">
 
-    <!-- LATEST BOOKS -->
-    <div class="rounded-3xl bg-white p-6 shadow-lg">
-      <h2 class="text-xl font-semibold text-slate-800 mb-4">
-        Latest Books (<span id="latestCount">0</span>)
-      </h2>
-	  <div class="mb-4">
-  <select id="languageFilter" style="color: #800000;"
-    class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm">
-    <option value="ALL">All Languages</option>
-  </select>
-</div>
+			<!-- LATEST BOOKS -->
+			<div class="rounded-3xl bg-white p-6 shadow-lg">
+				<h2 class="text-xl font-semibold text-slate-800 mb-4">
+					Latest Books (<span id="latestCount">0</span>)
+				</h2>
+				<div class="mb-4">
+					<select id="languageFilter" style="color: #800000;"
+						class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm">
+						<option value="ALL">All Languages</option>
+					</select>
+				</div>
 
-      <div id="latestContainer" class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3"></div>
-    </div>
+				<div id="latestContainer"
+					class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3"></div>
+			</div>
 
-    <!-- HISTORY -->
-    <div class="rounded-3xl bg-white p-6 shadow-lg">
-      <h2 class="text-xl font-semibold text-slate-800 mb-4">Book History</h2>
-      <div id="historyContainer"
-        class="text-slate-500 text-center h-[320px] flex flex-col items-center justify-center border border-dashed rounded-2xl p-4">
-        Select a book
-      </div>
-    </div>
+			<!-- HISTORY -->
+			<div class="rounded-3xl bg-white p-6 shadow-lg">
+				<h2 class="text-xl font-semibold text-slate-800 mb-4">Book
+					History</h2>
+				<div id="historyContainer"
+					class="text-slate-500 text-center h-[320px] flex flex-col items-center justify-center border border-dashed rounded-2xl p-4">
+					Select a book</div>
+			</div>
 
-  </div>
-</div>
+		</div>
+	</div>
 
-<script>
+	<script>
 /* ✅ USE YOUR WORKING APPS SCRIPT URL */
 const API_URL = "https://script.google.com/macros/s/AKfycbyP49X3NXTqbgascGLFzRpu_8u2tD-kVW3oJSCw1J6iSmFM0JSTAUf-OFYcfeJy40kkNg/exec";
 let selectedLanguage = "ALL";
 let allData = [];
 
-// ✅ Fetch data (CORS-safe, works in file://)
-
-/*async function fetchSheetData() {
-  showLoader();
-  fetch(`${API_URL}?action=get`)
-    .then(res => res.json())
-    .then(data => {
-
-      allData = data.map(row => ({
-        Title: row.Title?.trim(),
-        Language: row.Language?.trim(),
-        "Pending with": row["Pending with"]?.trim(),
-        "Purchase date": formatDate(row["Purchase date"]),
-        Latestyn: row.Latestyn?.toString().trim().toUpperCase()
-      }));
-
-      populateLanguageFilter();
-	  renderLatestBooks();
-    })
-    .catch(err => {
-      console.error("Error fetching data:", err);
-      document.getElementById("latestContainer").innerHTML =
-        `<div class="text-red-500 col-span-full text-center">Failed to load data</div>`;
-    });
-	hideLoader();
-}*/
-
+// ✅ Fetch data
 async function fetchSheetData() {
     showLoader();  // show loader first
 
@@ -135,6 +111,7 @@ async function fetchSheetData() {
 
         allData = data.map(row => ({
             Title: row.Title?.trim(),
+			Author: row.Author?.trim(),
             Language: row.Language?.trim(),
             "Pending with": row["Pending with"]?.trim(),
             "Purchase date": formatDate(row["Purchase date"]),
@@ -164,42 +141,6 @@ function formatDate(dateStr) {
 }
 
 // Render Latest Books
-/*function renderLatestBooks() {
-  const container = document.getElementById("latestContainer");
-  container.innerHTML = "";
-
-  const uniqueLatest = [
-    ...new Map(
-      allData
-        .filter(b => b["Latestyn"] === "Y" && (selectedLanguage === "ALL" || b["Language"] === selectedLanguage))
-        .map(b => [b["Title"], b])
-    ).values()
-  ];
-
-  document.getElementById("latestCount").innerText = uniqueLatest.length;
-
-  if (uniqueLatest.length === 0) {
-    container.innerHTML =
-      `<div class="text-slate-500 col-span-full text-center">No latest books found</div>`;
-    return;
-  }
-
-  uniqueLatest.forEach(book => {
-    const card = document.createElement("div");
-
-    card.className =
-      "cursor-pointer rounded-2xl border p-4 hover:bg-blue-50 transition";
-
-    card.innerHTML = `
-      <div class="font-bold text-slate-800">${book["Title"]}</div>
-      <div class="text-xs italic text-slate-500">${book["Language"]}</div>
-    `;
-
-    card.onclick = () => showHistory(book["Title"]);
-
-    container.appendChild(card);
-  });
-}*/
 function renderLatestBooks() {
   const container = document.getElementById("latestContainer");
   container.innerHTML = "";
@@ -236,10 +177,19 @@ function renderLatestBooks() {
     card.className =
       `cursor-pointer rounded-2xl border p-4 transition ${bgColor}`;
 
-    card.innerHTML = `
-      <div class="font-bold text-slate-800">${book["Title"]}</div>
-      <div class="text-xs italic text-slate-500">${book["Language"]}</div>
-    `;
+	card.innerHTML = `
+  <div class="font-semibold text-slate-900 leading-snug">
+    ${book["Title"]}
+  </div>
+  <div class="text-sm text-slate-700 mt-1">
+    by ${book["Author"] || "Unknown"}
+  </div>
+  <div class="mt-2">
+    <span class="inline-block text-xs bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full">
+      ${book["Language"]}
+    </span>
+  </div>
+`;
 
     card.onclick = () => showHistory(book["Title"]);
 
